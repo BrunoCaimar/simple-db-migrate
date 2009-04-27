@@ -13,6 +13,7 @@ if __name__ == "__main__":
     from helpers_test import *
     from main_test import *
     from mysql_test import *
+    from mssql_test import *
 
     test_suites = []
     
@@ -22,6 +23,7 @@ if __name__ == "__main__":
     test_suites.append(unittest.TestLoader().loadTestsFromTestCase(ListsTest))
     test_suites.append(unittest.TestLoader().loadTestsFromTestCase(MainTest))
     test_suites.append(unittest.TestLoader().loadTestsFromTestCase(MySQLTest))
+    test_suites.append(unittest.TestLoader().loadTestsFromTestCase(MSSQLTest))
     test_suites.append(unittest.TestLoader().loadTestsFromTestCase(SimpleDBMigrateTest))
     
     alltests = unittest.TestSuite(test_suites)
