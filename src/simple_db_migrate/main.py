@@ -2,6 +2,7 @@ from cli import CLI
 from core import SimpleDBMigrate
 from helpers import Lists
 from mysql import MySQL
+from mssql import MSSQL
 import sys
 
 class Main(object):
@@ -13,7 +14,10 @@ class Main(object):
         
         self.__mysql = mysql
         if self.__mysql is None and not self.__options.create_migration:
-            self.__mysql = MySQL(db_config_file=self.__options.db_config_file, drop_db_first=self.__options.drop_db_first)
+            if self.__options.srv_type == "mysql":
+              self.__mysql = MySQL(db_config_file=self.__options.db_config_file, drop_db_first=self.__options.drop_db_first)
+            else:
+              self.__mysql = MSSQL(db_config_file=self.__options.db_config_file, drop_db_first=self.__options.drop_db_first)
         
         self.__db_migrate = db_migrate
         if self.__db_migrate is None:
