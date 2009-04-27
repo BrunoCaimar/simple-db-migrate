@@ -1,0 +1,26 @@
+Steps to setup http://gc.blog.br/tag/simple-db-migrate/ on Windows
+By Bruno Caimar - April, 2009
+
+1. Download Python 2.5 - http://www.python.org/download/releases/2.5.4/
+2. Install it - MSI - Next, Next, Finish 
+3. Download Python setup tools - http://pypi.python.org/pypi/setuptools#windows
+4. Install it - MSI - Next, Next, Finish
+5. Download Mysql for Python - http://sourceforge.net/project/showfiles.php?group_id=22307&package_id=15775
+6. Install it - MSI - Next, Next, Finish
+7. Put your python directory in path
+8. Put your python\scripts directory in path
+9. easy_install simple-db-migrate
+10. To run the tests you will need pMock - http://pmock.sourceforge.net/
+11. pmock-0.3.tar.gz - Uncompress it and run python setup.py install (or just setup.py install)
+12. Download the simple-db-migrate - http://guilhermechapiewski.github.com/simple-db-migrate/
+13. Unzip it
+14. Run the tests - python simple-db-migrate\tests\test.py
+15. Be happy - **** All 33 tests passed ****
+
+MS SQL server
+-------------
+1. Download pymssql — simple MS SQL Python extension module - http://pymssql.sourceforge.net/download.html
+2. Install it - next, next, finish
+3. Download the simple-db-migrate with MS SQL Support - http://github.com/BrunoCaimar/simple-db-migrate
+4. Run the tests - python simple-db-migrate\tests\test.py
+5. Be happy - **** All 38 tests passed ****

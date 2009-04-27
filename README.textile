@@ -62,6 +62,12 @@ If you want you can migrate your database schema to specific version by informin
     
 If you don't specify any version, simple-db-migrate will migrate the schema to the latest version available on the migrations directory.
 
+h2. MS-SQL server support
+
+To run the migration scripts in MS-SQL Server.
+ 
+    $ db-migrate --srvtype mssql
+  
 h2. Roadmap, bug reporting and feature requests
 
 For detailed info about future versions, bug reporting and feature requests, go to the project's ticket system at "Lighthouse":http://simple-db-migrate.lighthouseapp.com/projects/25437-simple-db-migrate/overview.
