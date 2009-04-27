@@ -58,7 +58,7 @@ class MySQL(object):
         try:
             db.query("drop database %s;" % self.__mysql_db)
         except Exception, e:
-            self.__cli.error_and_exit("can't drop database '%s'; database doesn't exist" % self.__mysql_db)
+            self.__cli.error_and_exit("can't drop database '%s'; \n%s" % (self.__mysql_db, e))
         db.close()
         
     def _create_database_if_not_exists(self):
