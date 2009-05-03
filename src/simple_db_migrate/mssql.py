@@ -4,26 +4,18 @@ import sys
 
 class MSSQL(object):
 
-    def __init__(self, db_config_file="simple-db-migrate.conf", mssql_driver=_mssql, drop_db_first=False):
+    def __init__(self, config=None, mssql_driver=_mssql):
         self.__cli = CLI()
-
-        # read configurations
-        try:
-            f = open(db_config_file, "r")
-            exec(f.read())
-        except IOError:
-            self.__cli.error_and_exit("%s: file not found" % db_config_file)
-        else:
-            f.close()
-
         self.__mssql_driver = mssql_driver
-        self.__mssql_host = HOST
-        self.__mssql_user = USERNAME
-        self.__mssql_passwd = PASSWORD
-        self.__mssql_db = DATABASE
-        self.__version_table = "__db_version__"
-
-        if drop_db_first:
+        self.__mssql_host = config.get("db_host")
+        self.__mssql_user = config.get("db_user")
+        self.__mssql_passwd = config.get("db_password")
+        self.__mssql_db = config.get("db_name")
+        self.__version_table = config.get("db_version_table")
+        
+        print self.__mssql_host
+        
+        if config.get("drop_db_first"):
             self._drop_database()
 
         self._create_database_if_not_exists()

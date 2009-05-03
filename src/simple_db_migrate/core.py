@@ -1,16 +1,60 @@
 from cli import CLI
 from time import strftime
+from helpers import Utils
 import os
 import shutil
 import re
 
-#TODO: Refactor: rename to "Migrations"
-class SimpleDBMigrate(object):
+class Config(object):
+    
+    def __repr__(self):
+        return str(self.__config)
+    
+    def __init__(self, config_file="simple-db-migrate.conf"):
+        self.__cli = CLI()
+        self.__config = {}
+        
+        # read configurations
+        try:
+            f = open(config_file, "r")
+            exec(f.read())
+        except IOError:
+            self.__cli.error_and_exit("%s: file not found" % config_file)
+        else:
+            f.close()
+        
+        try:
+            self.put("db_host", HOST)
+            self.put("db_user", USERNAME)
+            self.put("db_password", PASSWORD)
+            self.put("db_name", DATABASE)
+            self.put("db_version_table", "__db_version__")
+        
+            migrations_dir = self.__get_migrations_absolute_dir(config_file, MIGRATIONS_DIR)
+            self.put("migrations_dir", migrations_dir)
+        except NameError, e:
+            self.__cli.error_and_exit("config file error: " + str(e))
+    
+    def __get_migrations_absolute_dir(self, config_file_path, migrations_dir):
+        return os.path.abspath(Utils.get_path_without_config_file_name(config_file_path) + "/" + migrations_dir)
+        
+    def get(self, config_key):
+        try:
+            return self.__config[config_key]
+        except KeyError, e:
+            raise Exception("invalid configuration key ('%s')" % config_key)
+            
+    def put(self, config_key, config_value):
+        if config_key in self.__config:
+            raise Exception("the configuration key '%s' already exists and you cannot override any configuration" % config_key)
+        self.__config[config_key] = config_value
+
+class Migrations(object):
     
     __migration_files_extension = ".migration"
     
-    def __init__(self, migrations_dir):
-        self.__migrations_dir = migrations_dir
+    def __init__(self, config=None):
+        self.__migrations_dir = config.get("migrations_dir")
         self.__cli = CLI()
 
     def get_all_migration_files(self):
@@ -71,8 +115,8 @@ class SimpleDBMigrate(object):
         
     def check_if_version_exists(self, version):
         files = self.get_all_migration_files()
-        for f in files:
-            if f.startswith(version):
+        for file_name in files:
+            if file_name[0:14] == version:
                 return True
         return False
         
@@ -115,10 +159,10 @@ class SimpleDBMigrate(object):
         return None
         
 class MigrationFile(object):
-    template = '''SQL_UP = """
+    template = '''SQL_UP = u"""
 
 """
 
-SQL_DOWN = """
+SQL_DOWN = u"""
 
 """'''
