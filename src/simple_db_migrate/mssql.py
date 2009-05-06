@@ -42,7 +42,7 @@ class MSSQL(object):
     def _drop_database(self):
         db = self.__mssql_connect(False)
         try:
-            db.execute_non_query("drop database %s;" % self.__mssql_db)
+            db.execute_non_query("if exists( select 1 from sysdatabases where name = '%s' ) drop database %s;" % (self.__mssql_db, self.__mssql_db))
         except Exception, e:
             self.__cli.error_and_exit("can't drop database '%s'; \n%s" % (self.__mssql_db, e))
         db.close()
