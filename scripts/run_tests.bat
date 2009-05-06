@@ -1,0 +1,2 @@
+
+python ..\tests\test.py

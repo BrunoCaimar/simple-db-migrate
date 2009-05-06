@@ -1,5 +1,5 @@
-Steps to setup http://gc.blog.br/tag/simple-db-migrate/ on Windows
-By Bruno Caimar - April, 2009
+Steps to setup http://gc.blog.br/tag/simple-db-migrate/ 1.2.5 on Windows
+By Bruno Caimar - May, 2009
 
 1. Download Python 2.5 - http://www.python.org/download/releases/2.5.4/
 2. Install it - MSI - Next, Next, Finish 
@@ -15,7 +15,7 @@ By Bruno Caimar - April, 2009
 12. Download the simple-db-migrate - http://guilhermechapiewski.github.com/simple-db-migrate/
 13. Unzip it
 14. Run the tests - python simple-db-migrate\tests\test.py
-15. Be happy - **** All 33 tests passed ****
+15. Be happy - **** All 39 tests passed ****
 
 MS SQL server
 -------------
@@ -23,4 +23,4 @@ MS SQL server
 2. Install it - next, next, finish
 3. Download the simple-db-migrate with MS SQL Support - http://github.com/BrunoCaimar/simple-db-migrate
 4. Run the tests - python simple-db-migrate\tests\test.py
-5. Be happy - **** All 38 tests passed ****
+5. Be happy - **** All 45 tests passed ****
