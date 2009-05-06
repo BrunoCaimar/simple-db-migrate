@@ -1,4 +1,5 @@
 from test import *
+from core import *
 from mssql import *
 from pmock import *
 import os
@@ -7,9 +8,19 @@ import unittest
 class MSSQLTest(unittest.TestCase):
 
     def setUp(self):
+        config_file = """
+HOST = os.getenv("DB_HOST") or "localhost"
+USERNAME = os.getenv("DB_USERNAME") or "root"
+PASSWORD = os.getenv("DB_PASSWORD") or ""
+DATABASE = os.getenv("DB_DATABASE") or "migration_test"
+MIGRATIONS_DIR = os.getenv("MIGRATIONS_DIR") or "."
+"""
         f = open("test.conf", "w")
-        f.write("HOST = 'localhost'\nUSERNAME = 'root'\nPASSWORD = ''\nDATABASE = 'migration_test'")
+        f.write(config_file)
         f.close()
+
+        self.__config = Config("test.conf")
+        self.__config.put("drop_db_first", False)
 
     def tearDown(self):
         os.remove("test.conf")
@@ -29,6 +40,24 @@ class MSSQLTest(unittest.TestCase):
         # check if exists any version
         db_mock.expects(once()).method("execute_scalar").execute_scalar(eq("select count(*) from __db_version__;")).will(return_value("0"));
         db_mock.expects(once()).method("close")
+        
+        # make the Mock Object iterable
+        def __iter__(self):
+          return self
+          
+        def next(self):
+          if self.current_item == len(self.data):
+            self.current_item = 0
+            raise StopIteration
+          
+          item={}
+          item["version"] = self.data[self.current_item]
+          self.current_item += 1
+          return item
+
+        Mock.current_item = 0
+        Mock.next = next
+        Mock.__iter__ = __iter__
 
     def __mock_db_execute(self, db_mock, query):
         # mock a call to __execute
@@ -47,7 +76,7 @@ class MSSQLTest(unittest.TestCase):
 
         self.__mock_db_init(mssql_driver_mock, db_mock)
 
-        mssql = MSSQL("test.conf", mssql_driver_mock)
+        mssql = MSSQL(self.__config, mssql_driver_mock)
 
     def test_it_should_drop_database_on_init_if_its_asked(self):
         mssql_driver_mock = Mock()
@@ -58,7 +87,7 @@ class MSSQLTest(unittest.TestCase):
         db_mock.expects(once()).method("execute_non_query").execute_non_query(eq("drop database migration_test;"))
         db_mock.expects(once()).method("close")
 
-        mssql = MSSQL(db_config_file="test.conf", mssql_driver=mssql_driver_mock, drop_db_first=True)
+        mssql = MSSQL(self.__config, mssql_driver_mock)
 
     def test_it_should_execute_migration_up_and_update_schema_version(self):
         mssql_driver_mock = Mock()
@@ -68,7 +97,7 @@ class MSSQLTest(unittest.TestCase):
         self.__mock_db_execute(db_mock, "create table spam();")
         self.__mock_db_execute(db_mock, "insert into __db_version__ (version) values ('20090212112104');")
 
-        mssql = MSSQL("test.conf", mssql_driver_mock)
+        mssql = MSSQL(self.__config, mssql_driver_mock)
         mssql.change("create table spam();", "20090212112104")
 
     def test_it_should_execute_migration_down_and_update_schema_version(self):
@@ -79,7 +108,7 @@ class MSSQLTest(unittest.TestCase):
         self.__mock_db_execute(db_mock, "create table spam();")
         self.__mock_db_execute(db_mock, "delete from __db_version__ where version >= '20090212112104';")
 
-        mssql = MSSQL("test.conf", mssql_driver_mock)
+        mssql = MSSQL(self.__config, mssql_driver_mock)
         mssql.change("create table spam();", "20090212112104", False)
 
     def test_it_should_get_current_schema_version(self):
@@ -91,34 +120,36 @@ class MSSQLTest(unittest.TestCase):
         db_mock.expects(once()).method("execute_scalar").execute_scalar(eq("select top 1 version from __db_version__ order by version desc ")).will(return_value("0"))
         db_mock.expects(once()).method("close")
 
-        mssql = MSSQL("test.conf", mssql_driver_mock)
+        mssql = MSSQL(self.__config, mssql_driver_mock)
         self.assertEquals("0", mssql.get_current_schema_version())
 
 # ToDo: Try to figure out how to do this test
 #       _mssql don't have fetchall
-#
-#    def test_it_should_get_all_schema_versions(self):
-#        mssql_driver_mock = Mock()
-#        db_mock = Mock()
-#
-#        self.__mock_db_init(mssql_driver_mock, db_mock)
-#
-#        expected_versions = []
-#        expected_versions.append("0")
-#        expected_versions.append("20090211120001")
-#        expected_versions.append("20090211120002")
-#        expected_versions.append("20090211120003")
 
-#        db_mock.expects(once()).method("execute_query").execute_query(eq("select version from __db_version__ order by version;"))
+    def test_it_should_get_all_schema_versions(self):
+        mssql_driver_mock = Mock()
+        db_mock = Mock()
+
+        self.__mock_db_init(mssql_driver_mock, db_mock)
+
+        expected_versions = []
+        expected_versions.append("0")
+        expected_versions.append("20090211120001")
+        expected_versions.append("20090211120002")
+        expected_versions.append("20090211120003")
+        db_mock.data = tuple(expected_versions)
+
+        db_mock.expects(once()).method("execute_query").execute_query(eq("select version from __db_version__ order by version;"))
+
 #        db.expects(once()).method("fetchall").will(return_value(tuple(zip(expected_versions))))
-#        db_mock.expects(once()).method("close")
+        db_mock.expects(once()).method("close")
 
-#        mssql = MSSQL("test.conf", mssql_driver_mock)
+        mssql = MSSQL(self.__config, mssql_driver_mock)
 
-#        schema_versions = mssql.get_all_schema_versions()
-#        self.assertEquals(len(expected_versions), len(schema_versions))
-#        for version in schema_versions:
-#            self.assertTrue(version in expected_versions)
+        schema_versions = mssql.get_all_schema_versions()
+        self.assertEquals(len(expected_versions), len(schema_versions))
+        for version in schema_versions:
+            self.assertTrue(version in expected_versions)
 
 if __name__ == "__main__":
     unittest.main()
