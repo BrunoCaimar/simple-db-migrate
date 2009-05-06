@@ -12,9 +12,7 @@ class MSSQL(object):
         self.__mssql_passwd = config.get("db_password")
         self.__mssql_db = config.get("db_name")
         self.__version_table = config.get("db_version_table")
-        
-        print self.__mssql_host
-        
+               
         if config.get("drop_db_first"):
             self._drop_database()
 
