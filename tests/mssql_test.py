@@ -123,9 +123,6 @@ MIGRATIONS_DIR = os.getenv("MIGRATIONS_DIR") or "."
         mssql = MSSQL(self.__config, mssql_driver_mock)
         self.assertEquals("0", mssql.get_current_schema_version())
 
-# ToDo: Try to figure out how to do this test
-#       _mssql don't have fetchall
-
     def test_it_should_get_all_schema_versions(self):
         mssql_driver_mock = Mock()
         db_mock = Mock()
@@ -140,8 +137,6 @@ MIGRATIONS_DIR = os.getenv("MIGRATIONS_DIR") or "."
         db_mock.data = tuple(expected_versions)
 
         db_mock.expects(once()).method("execute_query").execute_query(eq("select version from __db_version__ order by version;"))
-
-#        db.expects(once()).method("fetchall").will(return_value(tuple(zip(expected_versions))))
         db_mock.expects(once()).method("close")
 
         mssql = MSSQL(self.__config, mssql_driver_mock)

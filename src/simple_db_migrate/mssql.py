@@ -21,7 +21,8 @@ class MSSQL(object):
 
     def __mssql_connect(self, connect_using_db_name=True):
         try:
-            conn = self.__mssql_driver.connect(server=self.__mssql_host, user=self.__mssql_user, password=self.__mssql_passwd)
+            conn = self.__mssql_driver.connect(server=self.__mssql_host, user=self.__mssql_user, password=self.__mssql_passwd, charset='utf8')
+            
             if connect_using_db_name:
                 conn.select_db(self.__mssql_db)
             return conn
