@@ -14,6 +14,7 @@ USERNAME = os.getenv("DB_USERNAME") or "root"
 PASSWORD = os.getenv("DB_PASSWORD") or ""
 DATABASE = os.getenv("DB_DATABASE") or "migration_test"
 MIGRATIONS_DIR = os.getenv("MIGRATIONS_DIR") or "."
+SERVER_TYPE = os.getenv("SERVER_TYPE") or "mssql"
 """
         f = open("test.conf", "w")
         f.write(config_file)

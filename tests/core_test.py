@@ -16,6 +16,7 @@ USERNAME = os.getenv("DB_USERNAME") or "root"
 PASSWORD = os.getenv("DB_PASSWORD") or ""
 DATABASE = os.getenv("DB_DATABASE") or "migration_example"
 MIGRATIONS_DIR = os.getenv("MIGRATIONS_DIR") or "example"
+SERVER_TYPE = os.getenv("SERVER_TYPE") or "mysql"
 """
         f = open("sample.conf", "w")
         f.write(config_file)
@@ -33,7 +34,8 @@ MIGRATIONS_DIR = os.getenv("MIGRATIONS_DIR") or "example"
         self.assertEquals(config.get("db_name"), "migration_example")
         self.assertEquals(config.get("db_version_table"), "__db_version__")
         self.assertEquals(config.get("migrations_dir"), os.path.abspath("example"))
-
+        self.assertEquals(config.get("server_type"), "mysql") 
+        
     def test_it_should_stop_execution_when_an_invalid_key_is_requested(self):
         config_path = os.path.abspath("sample.conf")
         config = Config(config_path)
@@ -75,6 +77,7 @@ USERNAME = os.getenv("DB_USERNAME") or "root"
 PASSWORD = os.getenv("DB_PASSWORD") or ""
 DATABASE = os.getenv("DB_DATABASE") or "migration_example"
 MIGRATIONS_DIR = os.getenv("MIGRATIONS_DIR") or "."
+SERVER_TYPE = os.getenv("SERVER_TYPE") or "mysql"
 """
         f = open("test_config_file.conf", "w")
         f.write(config_file)

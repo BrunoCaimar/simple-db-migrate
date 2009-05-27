@@ -13,7 +13,7 @@ class Main(object):
         
         self.__mysql = mysql
         if self.__mysql is None and not self.__config.get("new_migration"):            
-            if self.__config.get("srv_type") == "mysql":
+            if self.__config.get("server_type") == "mysql":
               self.__mysql = MySQL(config)
             else:
               self.__mysql = MSSQL(config)

@@ -57,11 +57,6 @@ class CLI(object):
                 dest="drop_db_first", 
                 default=False, 
                 help="Drop database before running migrations to create everything from scratch. Useful when the database schema is corrupted and the migration scripts are not working.")
-        # ToDo - Think better about it later. Maybe the best option to define the target would be a parameter in config file
-        self.__parser.add_option("--srvtype", "--server-type",
-                dest="srv_type", 
-                default="mysql", 
-                help="Specify the SQL Server Type (default is mysql) \n\n Options: mysql or mysql")
 
         self.__parser.add_option("--showsql", 
                 action="store_true", 

@@ -28,12 +28,7 @@ class CLITest(unittest.TestCase):
         
         self.assertTrue(parser.has_option("--drop"))
         self.assertTrue(parser.has_option("--drop-database-first"))
-
-        self.assertTrue(parser.has_option("--srvtype"))
-        self.assertTrue(parser.has_option("--server-type"))
-        
-        self.assertTrue(parser.has_option("--color"))
-        
+                
         self.assertTrue(parser.has_option("--color"))
         
     def test_it_should_show_error_message_and_exit(self):

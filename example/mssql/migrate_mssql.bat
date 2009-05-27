@@ -1,1 +1,1 @@
-python ..\..\src\db-migrate --srvtype mssql --drop %1 %2
+python ..\..\src\db-migrate --drop %1 %2
